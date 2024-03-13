@@ -2,6 +2,7 @@
 from time import time, sleep
 
 import Adafruit_SSD1306
+import Adafruit_DHT
 
 from PIL import Image
 from PIL import ImageDraw
@@ -16,28 +17,37 @@ RST = 24
 disp = Adafruit_SSD1306.SSD1306_128_64(rst=RST)
 disp.begin()
 
-# Clear display.
 disp.clear()
 disp.display()
 
-image = Image.new('1', (disp.width, disp.height))
-draw = ImageDraw.Draw(image)
 font = ImageFont.truetype('calibri-bold.ttf', 22)
 
 ##################################################
 
-humidity = 70
-temperature = 30
+dht11 = Adafruit_DHT.DHT11
+dht11_pin = 17
 
-humidity_formated = "Hum: " + str(humidity) + " %"
-temperature_formated = "Temp: " + str(temperature) + " °C"
+def read_dht11_data():
+    humidity, temperature = Adafruit_DHT.read_retry(dht11, dht11_pin)
+    if humidity is not None and temperature is not None:
+        return humidity, temperature
+
 
 ##################################################
 
-draw.text((5, 5), humidity_formated, font=font, fill=255)
-draw.text((5, 32), temperature_formated, font=font, fill=255)
-disp.image(image)
-disp.display()
+def draw_display():
+    image = Image.new('1', (disp.width, disp.height))
+    draw = ImageDraw.Draw(image)
+
+    humidity, temperature = read_dht11_data()
+
+    humidity_formated = "Hum: " + str(humidity) + " %"
+    temperature_formated = "Temp: " + str(temperature) + " °C"
+
+    draw.text((5, 5), humidity_formated, font=font, fill=255)
+    draw.text((5, 32), temperature_formated, font=font, fill=255)
+    disp.image(image)
+    disp.display()
 
 ##################################################
 #Checks if there is a person in the room and changes the state accordingly
@@ -59,6 +69,7 @@ pir.when_no_motion = no_motion
 ##################################################
 
 while True:
+    draw_display()
     sleep(1)
     
 ##################################################
