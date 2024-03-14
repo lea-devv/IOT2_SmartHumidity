@@ -1,6 +1,7 @@
 #https://learn.adafruit.com/ssd1306-oled-displays-with-raspberry-pi-and-beaglebone-black/usage
 from time import time, sleep
 
+import paho.mqtt.publish as publish
 import Adafruit_SSD1306
 import Adafruit_DHT
 
@@ -51,17 +52,17 @@ def draw_display():
 
 ##################################################
 #Checks if there is a person in the room and changes the state accordingly
-person_state = False
+pir_state = False
 
 def motion():
-    global person_state
+    global pir_state
     print("Motion has been detected")
-    person_state = True
+    pir_state = True
 
 def no_motion():
-    global person_state
+    global pir_state
     print("I'm all alone")
-    person_state = False
+    pir_state = False
 
 pir.when_motion = motion
 pir.when_no_motion = no_motion
@@ -69,6 +70,10 @@ pir.when_no_motion = no_motion
 ##################################################
 
 while True:
+    humidity, temperature = read_dht11_data()
+    publish.single("console_temp", temperature , hostname="4.231.174.166") 
+    publish.single("console_hum", humidity , hostname="4.231.174.166") 
+    publish.single("pir_state", pir_state , hostname="4.231.174.166") 
     draw_display()
     sleep(1)
     
