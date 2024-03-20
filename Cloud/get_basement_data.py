@@ -2,22 +2,24 @@ import sqlite3
 from datetime import datetime
 from time import sleep
 
-def get_stue_data(number_of_rows):
+def get_basement_data(number_of_rows):
    
-        query = """SELECT * FROM stue ORDER BY datetime DESC;"""
+        query = """SELECT * FROM basement ORDER BY datetime DESC;"""
         datetimes = []
+        gas = []
         temperatures = []
         humidities = []
         try:
-            conn = sqlite3.connect("database/sensor_data.db")
+            conn = sqlite3.connect("database/basement_data.db")
             cur = conn.cursor()
             cur.execute(query)
             rows = cur.fetchmany(number_of_rows)
             for row in reversed(rows):
-                 datetimes.append(row[1])
-                 temperatures.append(row[2])
-                 humidities.append(row[0])
-            return datetimes, temperatures, humidities
+                 datetimes.append(row[0])
+                 gas.append(row[1])
+                 temperatures.append(row[3])
+                 humidities.append(row[2])
+            return datetimes, gas, humidities, temperatures
         except sqlite3.Error as sql_e:
             print(f"sqlite error occured: {sql_e}")
             conn.rollback()
@@ -25,4 +27,3 @@ def get_stue_data(number_of_rows):
             print(f"Error occured: {e}")
         finally:
             conn.close()
-        

@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 def check_humidity(number_of_rows):
-        query = """SELECT humidity FROM stue ORDER BY datetime DESC;"""
+        query = """SELECT humidity FROM bathroom ORDER BY datetime DESC;"""
         humidities = []
         try:
             conn = sqlite3.connect("database/sensor_data.db")
@@ -29,7 +29,13 @@ while True:
     humidity = check_humidity(1)
     print(humidity)
     if humidity is not None and humidity < 32.0:
-        payload = "open"
-        publish.single("window_command", json.dumps(payload) , hostname="4.231.174.166")
-    print("scritp is running")
+        payload1 = "open"
+        payload2 = "on"
+        publish.single("window_command", payload1 , hostname="4.231.174.166")
+        publish.single("furnace_command", payload2 , hostname="4.231.174.166")
+    elif humidity is not None and humidity > 32.0:
+        payload1 = "close"
+        payload2 = "off"
+        publish.single("window_command", payload1 , hostname="4.231.174.166")
+        publish.single("furnace_command", payload2 , hostname="4.231.174.166")
     sleep(1)

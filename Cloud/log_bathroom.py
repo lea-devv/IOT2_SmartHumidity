@@ -1,13 +1,14 @@
 import sqlite3
-from random import randint
 from datetime import datetime
 import paho.mqtt.subscribe as subscribe
 import json
+from time import sleep
+
 
 
 
 def create_table():
-    query = """CREATE TABLE IF NOT EXISTS stue (humidity REAL NOT NULL, datetime TEXT NOT NULL, temperature REAL NOT NULL);"""
+    query = """CREATE TABLE IF NOT EXISTS bathroom (humidity REAL NOT NULL, datetime TEXT NOT NULL, temperature REAL NOT NULL);"""
     try:
         conn = sqlite3.connect("database/sensor_data.db")
         cur = conn.cursor()
@@ -20,16 +21,18 @@ def create_table():
     finally:
         conn.close()
 
-create_table()   
-     
-def on_message_print(client, userdata, message):
-    print("%s %s" % (message.topic, message.payload))
-    query = """INSERT INTO stue(datetime, temperature, humidity) VALUES(?, ?, ?)"""
+#create_table()     
+def console_data():
+    humidity = subscribe.simple("console_hum", hostname="4.231.174.166")
+    temperature = subscribe.simple("console_temp", hostname="4.231.174.166")
+    bathroom_hum = humidity.payload.decode()
+    bathroom_temp = temperature.payload.decode()
+    print(bathroom_temp, bathroom_hum)
     now = datetime.now()
-    now = now.strftime("%d/%m/%y %H:%M:%S")
-    print(type(json.loads(message.payload.decode())))
-    dht11_data = json.loads(message.payload.decode())
-    data = (now, dht11_data['temperature'], dht11_data['humidity'])
+    now = now.strftime("%d/%m/%y %H:%M:%S")  
+    data = (now, bathroom_temp, bathroom_hum)
+    query = """INSERT INTO bathroom(datetime, temperature, humidity) VALUES(?, ?, ?)"""
+
    
    
     try:
@@ -45,4 +48,8 @@ def on_message_print(client, userdata, message):
     finally:
         conn.close()
 print("script is running")
-subscribe.callback(on_message_print, "test", hostname="4.231.174.166", userdata={"message_count": 0})
+while True: 
+    console_data()
+    sleep(1)
+    
+

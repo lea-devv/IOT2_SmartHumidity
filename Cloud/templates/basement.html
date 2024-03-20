@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}home{% endblock %}
+{% block content %}
+<meta http-equiv="refresh" content="5">
+<div class="fluid-content">
+<h1> Basement dashboard</h1>
+<img class = "img-fluid float-left" src='data:image/png;base64,{{basement_temperature}}'/>
+<img class = "img-fluid float-right" src='data:image/png;base64,{{basement_humidity}}'/>
+<br>
+<img class = "img-fluid float-left" src='data:image/png;base64,{{basement_gas}}'/>
+</div>
+{% endblock %}
