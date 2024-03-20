@@ -23,9 +23,9 @@ CLIENT_NAME = 'esp32_client'
 BROKER_ADDR = '4.231.174.166' 
 mqttc = MQTTClient(CLIENT_NAME, BROKER_ADDR, keepalive=5)
 
-
+manual_window = Timer(1)
 window_closed = True
-
+integer= 5
 def move_motor(steps, direction):
     """Move the motor a certain number of steps in a given direction."""
     sequence = sequence_forward if direction == 'forward' else sequence_backward
@@ -34,12 +34,15 @@ def move_motor(steps, direction):
             for i in range(len(pins)):
                 pins[i].value(step[i])
                 sleep(0.001)
-def Manual(manual_window):
-    move_motor(500, 'backward')
+
+def timeout_close(manual_window):
+        move_motor(500, 'backward')
+        window_open = False
     
 
 def sub_topic(topic, msg):
     global window_closed
+    global timer_variable
     print((topic, msg))
     print(window_closed)
     if topic == b'window_command' and msg == b'open' and window_closed == True:
@@ -47,8 +50,13 @@ def sub_topic(topic, msg):
         window_closed = False
     if topic == b'window_command' and msg == b'close' and window_closed == False:
         move_motor(500, 'backward')
-        window_closed = True  
-        
+        window_closed = True
+    if topic == b'autoclose_variable':
+        integer = int(msg.decode('utf-8')) 
+        print(integer)
+        timer_variable = integer * 6000
+        print(timer_variable)
+      
 def connect_and_subscribe():
     global client_id, mqtt_server, topic_sub1, topic_sub2, topic_sub3
     client = MQTTClient(client_id, mqtt_server)
@@ -72,16 +80,18 @@ except OSError as e:
     
 while True:
     client.check_msg()
-    sleep(3)
-    first = pb1.value()
+    first = pb2.value()
     sleep(0.01)
-    second = pb1.value()
-    first2 = pb2.value()
+    second = pb2.value()
+    fremad = pb1.value()
     sleep(0.01)
-    second2 = pb2.value()
-    if first  == 1 and second == 0:
-        print("1")
+    fremad_slip = pb1.value()
+    if fremad == 1 and fremad_slip == 0:
         move_motor(500, 'forward')
-        manual_window.init(period=6100, mode=Timer.ONE_SHOT, callback=Manual)
-    if first2 == 1 and first2 == 0: 
-        move_motor(500, 'backward') 
+        print("Knap Trykkes")
+        window_open = True
+        global timer_variable
+        manual_window.init(period= timer_variable, mode=Timer.ONE_SHOT, callback=timeout_close)
+    elif first == 1 and second == 0:
+        move_motor(500, 'backward')
+        print("Knap sluppet")
