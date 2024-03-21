@@ -7,4 +7,4 @@ def on_message_print(client, userdata, message):  #brug disse argumenter
         # it's possible to stop the program by disconnecting
         client.disconnect()
 
-subscribe.callback(on_message_print, "pir_state", hostname="4.231.174.166", userdata={"message_count": 0})  #brug paho til at subscribe til bestemt topic, hostname er sensorens ip adresse. Userdata er beskedlængden
+subscribe.callback(on_message_print, "autoclose_variable", hostname="4.231.174.166", userdata={"message_count": 0})  #brug paho til at subscribe til bestemt topic, hostname er sensorens ip adresse. Userdata er beskedlængden

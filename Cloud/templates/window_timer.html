@@ -1,5 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% block title %}home{% endblock %}
+{% block content %}
 <head>
     <meta charset="UTF-8">
     <title>Window_timer</title>
@@ -12,4 +13,4 @@
     </form>
     <p>Current value of the variable: {{ timer }}</p>
 </body>
-</html>
+{% endblock %}

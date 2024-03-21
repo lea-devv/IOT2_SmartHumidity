@@ -2,7 +2,7 @@ from DMI import dmi_vejr
 
 latitude = 55.69167045976886
 longitude = 12.554718594176451
-api_key = 'INSERT API KEY HERE'
+api_key = ''
 
 dmi = dmi_vejr(latitude, longitude, api_key)
 
