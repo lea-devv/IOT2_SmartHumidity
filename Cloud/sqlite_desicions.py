@@ -28,7 +28,7 @@ def get_basement_data(number_of_rows):
     temperatures = []
     gas = []
     try:
-        conn = sqlite3.connect("c:/GitHub/IOT2_SmartHumidity/Cloud/database/basement_data.db")
+        conn = sqlite3.connect("database/basement_data.db")
         cur = conn.cursor()
         cur.execute(create_query)
         cur.execute(select_query)
@@ -56,15 +56,15 @@ def get_console_data(number_of_rows):
         temperatures = []
         humidities = []
         try:
-            conn = sqlite3.connect("c:/GitHub/IOT2_SmartHumidity/Cloud/database/sensor_data.db")
+            conn = sqlite3.connect("database/sensor_data.db")
             cur = conn.cursor()
             cur.execute(create_query)
             cur.execute(select_query)
             rows = cur.fetchmany(number_of_rows)
             for row in reversed(rows):
-                 datetimes.append(row[1])
+                 datetimes.append(row[0])
                  temperatures.append(row[2])
-                 humidities.append(row[0])
+                 humidities.append(row[1])
             return datetimes, temperatures, humidities
         except sqlite3.Error as sql_e:
             print(f"sqlite error occured: {sql_e}")
@@ -114,7 +114,7 @@ def log_data():
         now = datetime.now()
         now = now.strftime("%d/%m/%y %H:%M:%S")
         try:
-            conn = sqlite3.connect("c:/GitHub/IOT2_SmartHumidity/Cloud/database/sensor_data.db")
+            conn = sqlite3.connect("database/sensor_data.db")
             cur = conn.cursor()
             console_query = """INSERT INTO console(datetime, humidity, temperature) VALUES(?, ?, ?)"""
             if console_temp and console_hum is not None:
@@ -130,7 +130,7 @@ def log_data():
             conn.close()
 
         try:
-            conn = sqlite3.connect("c:/GitHub/IOT2_SmartHumidity/Cloud/database/basement_data.db")
+            conn = sqlite3.connect("database/basement_data.db")
             cur = conn.cursor()
             basement_query = """INSERT INTO basement(datetime, humidity, temperature, gas) VALUES(?, ?, ?, ?)"""
             if basement_gas is not None and basement_hum is not None and basement_temp is not None:
