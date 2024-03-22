@@ -9,7 +9,7 @@ import base64
 ###############################################################
 #Bathroom temperature graph
 def bathroom_temp():
-    timestamps, temperature, humidity = get_console_data(10)
+    timestamps, temperature, humidity = get_console_data(5000)
     formatted_timestamps = [datetime.strptime(ts, "%d/%m/%y %H:%M:%S").strftime("%H:%M:%S") for ts in timestamps]
     fig = Figure()
     fig.subplots_adjust(bottom=0.3)
@@ -29,7 +29,7 @@ def bathroom_temp():
 ###############################################################
 #Bathroom temperature graph
 def bathroom_hum():
-    timestamps, temperature, humidity = get_console_data(10)
+    timestamps, temperature, humidity = get_console_data(5000)
     formatted_timestamps = [datetime.strptime(ts, "%d/%m/%y %H:%M:%S").strftime("%H:%M:%S") for ts in timestamps]
     fig = Figure()
     fig.subplots_adjust(bottom=0.3)
