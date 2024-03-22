@@ -151,10 +151,10 @@ def log_data():
 def desicions():
     wind_speed, total_precipitation, forecast_datetime = dmi.get_rain_wind()
     if total_precipitation <= 0.5:
-        if console_hum is not None and console_hum < 60.0:
+        if console_hum is not None and console_hum > 60.0:
             publish.single("window_command", "open" , hostname="4.231.174.166")
             publish.single("furnace_command", "on" , hostname="4.231.174.166")
-        elif console_hum is not None and console_hum > 50.0:
+        elif console_hum is not None and console_hum < 50.0:
             publish.single("window_command", "close" , hostname="4.231.174.166")
             publish.single("furnace_command", "off" , hostname="4.231.174.166")
     else:
