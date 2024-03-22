@@ -22,7 +22,7 @@ furnace_command = b"furnace_command"
 i2c = I2C(1, scl=Pin(22), sda=Pin(21))
 bme = BME680_I2C(i2c=i2c)
 
-furnace_led = Pin(0, Pin.OUT)
+furnace_led = Pin(26, Pin.OUT)
 gas_led = Pin(4, Pin.OUT)
 gas_timer = Timer(1)
 
