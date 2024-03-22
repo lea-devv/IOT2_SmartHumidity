@@ -77,7 +77,7 @@ def basement_gas():
     ax.xaxis.set_major_locator(ticker.MaxNLocator(nbins=10, prune='both'))
     ax.set_title('Gas')
     ax.set_xlabel("Timestamp")
-    ax.set_ylabel("Ohm")
+    ax.set_ylabel("Units")
     buf = BytesIO()
     fig.savefig(buf, format="png")
     data = base64.b64encode(buf.getbuffer()).decode("ascii")
