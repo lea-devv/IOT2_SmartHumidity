@@ -92,7 +92,7 @@ def connect_and_subscribe():
 
     except Exception as e:
         print('Failed to connect to MQTT broker:', e)
-
+    
 ####################################################
 #Run the code
 connect_and_subscribe()
