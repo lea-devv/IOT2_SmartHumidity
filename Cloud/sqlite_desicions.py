@@ -28,7 +28,7 @@ def get_basement_data(number_of_rows):
     temperatures = []
     gas = []
     try:
-        conn = sqlite3.connect("database/basement_data.db")
+        conn = sqlite3.connect("C:\GitHub\IOT2_SmartHumidity\Cloud\database/basement_data.db")
         cur = conn.cursor()
         cur.execute(create_query)
         cur.execute(select_query)
@@ -56,7 +56,7 @@ def get_console_data(number_of_rows):
         temperatures = []
         humidities = []
         try:
-            conn = sqlite3.connect("database/sensor_data.db")
+            conn = sqlite3.connect("C:\GitHub\IOT2_SmartHumidity\Cloud\database/sensor_data.db")
             cur = conn.cursor()
             cur.execute(create_query)
             cur.execute(select_query)
@@ -102,9 +102,11 @@ def on_message(client, userdata, msg):
     
     if msg.topic == "console_hum":
         console_hum = str(msg.payload.decode())
+        desicions()
 
     if msg.topic == "console_temp":
         console_temp = str(msg.payload.decode())
+
     
 ##############################################################
 #Takes the data recieved from mqtt and enters it into the databases
@@ -114,7 +116,7 @@ def log_data():
         now = datetime.now()
         now = now.strftime("%d/%m/%y %H:%M:%S")
         try:
-            conn = sqlite3.connect("database/sensor_data.db")
+            conn = sqlite3.connect("C:\GitHub\IOT2_SmartHumidity\Cloud\database/sensor_data.db")
             cur = conn.cursor()
             console_query = """INSERT INTO console(datetime, humidity, temperature) VALUES(?, ?, ?)"""
             if console_temp and console_hum is not None:
@@ -130,7 +132,7 @@ def log_data():
             conn.close()
 
         try:
-            conn = sqlite3.connect("database/basement_data.db")
+            conn = sqlite3.connect("C:\GitHub\IOT2_SmartHumidity\Cloud\database/basement_data.db")
             cur = conn.cursor()
             basement_query = """INSERT INTO basement(datetime, humidity, temperature, gas) VALUES(?, ?, ?, ?)"""
             if basement_gas is not None and basement_hum is not None and basement_temp is not None:
@@ -149,14 +151,20 @@ def log_data():
 ##############################################################
 #Decideds if the window should open and if the furnace should turn off
 def desicions():
+    global console_hum
     wind_speed, total_precipitation, forecast_datetime = dmi.get_rain_wind()
     if total_precipitation <= 0.5:
-        if console_hum is not None and console_hum > 60.0:
-            publish.single("window_command", "open" , hostname="4.231.174.166")
-            publish.single("furnace_command", "on" , hostname="4.231.174.166")
-        elif console_hum is not None and console_hum < 50.0:
-            publish.single("window_command", "close" , hostname="4.231.174.166")
-            publish.single("furnace_command", "off" , hostname="4.231.174.166")
+        if console_hum is not None:
+            console_hum = float(console_hum)
+            print(console_hum)
+            if console_hum > 60.0:
+                print("Open")
+                publish.single("window_command", "open" , hostname="4.231.174.166")
+                publish.single("furnace_command", "on" , hostname="4.231.174.166")
+            elif console_hum < 50.0:
+                print("Close")
+                publish.single("window_command", "close" , hostname="4.231.174.166")
+                publish.single("furnace_command", "off" , hostname="4.231.174.166")
     else:
         publish.single("window_command", "close" , hostname="4.231.174.166")
         publish.single("furnace_command", "off" , hostname="4.231.174.166")

@@ -62,23 +62,31 @@ def sub_topic(topic, msg):
     global timer_m, timer_ms
     global person
     
-    if manual_override == False:
-        if topic == b'window_command' and msg == b'open' and window_closed == True and person == False:
-            move_motor(500, 'forward')
-            window_closed = False
-
-        if topic == b'window_command' and msg == b'close' and window_closed == False:
-            move_motor(500, 'backward')
-            window_closed = True
-
-    if topic == b'autoclose_variable':
-        timer_m = int(msg.decode('utf-8')) 
-        timer_ms = timer_m * 6000
-        print(timer_ms)
-    
-    if topic == b'pir_state':
-        person = bool(msg.decode('utf-8'))
-        print(person)
+    try:
+        decoded_msg = msg.decode('utf-8')
+        decoded_topic = topic.decode('utf-8')
+        if manual_override == False:
+            if topic == window_command:
+                str_window_closed = str(window_closed)
+                str_person = str(person)
+                if decoded_msg == "open":
+                    if str_window_closed == "True" and str_person == "False":
+                        move_motor(500, 'forward')
+                        window_closed = False
+                elif decoded_msg == "close":
+                    if str_window_closed == "False":
+                        move_motor(500, 'backward')
+                        window_closed = True
+            
+        if topic == autoclose_variable:   
+            timer_m = int(decoded_msg) 
+            timer_ms = timer_m * 6000
+                        
+        if topic == pir_state:  
+            person = str(decoded_msg)
+            
+    except Exception as e:
+        print(f"Error processing MQTT message: {e}") 
 
 ####################################################
 def connect_and_subscribe():
@@ -92,7 +100,7 @@ def connect_and_subscribe():
 
     except Exception as e:
         print('Failed to connect to MQTT broker:', e)
-    
+
 ####################################################
 #Run the code
 connect_and_subscribe()
