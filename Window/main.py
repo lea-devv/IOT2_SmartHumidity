@@ -40,7 +40,7 @@ manual_override = False
 person = False
 ####################################################
 def move_motor(steps, direction):
-    """Move the motor a certain number of steps in a given direction."""
+    #Moves the motor
     sequence = sequence_forward if direction == 'forward' else sequence_backward
     for _ in range(steps):
         for step in sequence:
