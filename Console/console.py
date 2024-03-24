@@ -1,4 +1,4 @@
-#https://learn.adafruit.com/ssd1306-oled-displays-with-raspberry-pi-and-beaglebone-black/usage
+#Inspiration for OLED code taken from here: https://learn.adafruit.com/ssd1306-oled-displays-with-raspberry-pi-and-beaglebone-black/usage
 from time import time, sleep
 
 import paho.mqtt.publish as publish
