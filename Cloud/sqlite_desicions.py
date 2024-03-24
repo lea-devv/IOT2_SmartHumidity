@@ -8,7 +8,7 @@ import threading
 
 latitude = 55.69167045976886
 longitude = 12.554718594176451
-api_key = 'fafd94e1-e6ce-44d3-b5c9-13fd9f92ab6a'
+api_key = '<DMI-API-KEY>'
 
 dmi = dmi_vejr(latitude, longitude, api_key)
 
